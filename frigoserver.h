@@ -18,7 +18,7 @@ signals:
 public slots:
     void receivedDatagram();
     void dispatchMessage(QJsonDocument *message);
-    void playSound(QString key);
+    void playSound(QString key, int volume);
 
 private:
     QUdpSocket socket;

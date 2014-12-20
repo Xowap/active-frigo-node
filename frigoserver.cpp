@@ -45,12 +45,21 @@ void FrigoServer::dispatchMessage(QJsonDocument *message)
         QString type = data["type"].toString();
 
         if (type == "play-sound") {
-            playSound(data["name"].toString());
+            QString name = data["name"].toString();
+            int volume;
+
+            if (data["volume"].isDouble()) {
+                volume = data["volume"].toDouble();
+            } else {
+                volume = 100;
+            }
+
+            playSound(name, volume);
         }
     }
 }
 
-void FrigoServer::playSound(QString key)
+void FrigoServer::playSound(QString key, int volume)
 {
     QString sound = Config::getInstance().getSound(key);
 
@@ -59,6 +68,7 @@ void FrigoServer::playSound(QString key)
     }
 
     player.setMedia(QUrl::fromLocalFile(sound));
+    player.setVolume(volume);
     player.play();
 
     qDebug() << "Playing sound " << key;

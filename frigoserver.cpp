@@ -7,10 +7,15 @@
 #include <QJsonObject>
 #include <QUrl>
 #include <QBuffer>
+#include <QNetworkInterface>
+#include <QList>
 
 FrigoServer::FrigoServer(QObject *parent) : QObject(parent)
 {
-    socket.bind(QHostAddress::LocalHostIPv6, 42000);
+    QHostAddress bindAddress("225.42.42.42");
+    socket.bind(QHostAddress::AnyIPv4, 42000);
+    socket.joinMulticastGroup(bindAddress);
+
     connect(&socket, SIGNAL(readyRead()), this, SLOT(receivedDatagram()));
 }
 

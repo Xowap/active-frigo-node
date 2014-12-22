@@ -1,6 +1,8 @@
 {
 	"name": "Sample",
 	"sounds": {
-		"ahaha": "ahaha.wav"
+		"ahaha": "ahaha.wav",
+		"fdp": "fdp.wav",
+		"nelson": "nelson.wav"
 	}
 }

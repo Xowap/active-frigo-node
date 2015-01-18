@@ -1,0 +1,3 @@
+[submodule "frigotunnel"]
+	path = frigotunnel
+	url = git@github.com:Xowap/frigotunnel.git

@@ -5,6 +5,9 @@
 #include <QUdpSocket>
 #include <QVariant>
 #include <QMediaPlayer>
+#include <QJsonObject>
+
+#include "frigotunnel.h"
 
 class FrigoServer : public QObject
 {
@@ -16,12 +19,11 @@ public:
 signals:
 
 public slots:
-    void receivedDatagram();
-    void dispatchMessage(QJsonDocument *message);
+    void handleMessage(const QJsonObject &message);
     void playSound(QString key, int volume);
 
 private:
-    QUdpSocket socket;
+    FrigoTunnel *tunnel;
     QMediaPlayer player;
 };
 

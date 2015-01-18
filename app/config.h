@@ -19,7 +19,8 @@ public:
 
     bool isValid();
 
-    const QString &getSound(const QString &key);
+    QString getSound(const QString &key) const;
+    QString getName() const;
 
 signals:
 

@@ -10,57 +10,32 @@
 #include <QNetworkInterface>
 #include <QList>
 
-FrigoServer::FrigoServer(QObject *parent) : QObject(parent)
+FrigoServer::FrigoServer(QObject *parent) :
+    QObject(parent),
+    tunnel(new FrigoTunnel(Config::getInstance().getName(), this))
 {
-    QHostAddress bindAddress("225.42.42.42");
-    socket.bind(QHostAddress::AnyIPv4, 42000);
-    socket.joinMulticastGroup(bindAddress);
-
-    connect(&socket, SIGNAL(readyRead()), this, SLOT(receivedDatagram()));
+    connect(tunnel, &FrigoTunnel::gotMessage, this, &FrigoServer::handleMessage);
 }
 
 FrigoServer::~FrigoServer()
 {
-
 }
 
-void FrigoServer::receivedDatagram()
+void FrigoServer::handleMessage(const QJsonObject &message)
 {
-    while (socket.hasPendingDatagrams()) {
-        QByteArray datagram;
-        QHostAddress sender;
-        quint16 senderPort;
+    QString type = message["type"].toString();
 
-        datagram.resize(socket.pendingDatagramSize());
-        socket.readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
+    if (type == "play-sound") {
+        QString name = message["name"].toString();
+        int volume;
 
-        QJsonParseError error;
-        QJsonDocument message = QJsonDocument::fromJson(datagram, &error);
-
-        if (error.error == QJsonParseError::NoError) {
-            dispatchMessage(&message);
+        if (message["volume"].isDouble()) {
+            volume = message["volume"].toDouble();
+        } else {
+            volume = 100;
         }
-    }
-}
 
-void FrigoServer::dispatchMessage(QJsonDocument *message)
-{
-    if (message->isObject()) {
-        QJsonObject data = message->object();
-        QString type = data["type"].toString();
-
-        if (type == "play-sound") {
-            QString name = data["name"].toString();
-            int volume;
-
-            if (data["volume"].isDouble()) {
-                volume = data["volume"].toDouble();
-            } else {
-                volume = 100;
-            }
-
-            playSound(name, volume);
-        }
+        playSound(name, volume);
     }
 }
 

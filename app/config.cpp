@@ -23,9 +23,14 @@ bool Config::isValid()
     return valid;
 }
 
-const QString &Config::getSound(const QString &key)
+QString Config::getSound(const QString &key) const
 {
     return sounds[key];
+}
+
+QString Config::getName() const
+{
+    return document.object()["name"].toString();
 }
 
 void Config::load(QString filename)

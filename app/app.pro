@@ -25,6 +25,6 @@ HEADERS += \
     frigoserver.h \
     config.h
 
-INCLUDEPATH += frigotunnel/lib
+INCLUDEPATH += $$PWD/../frigotunnel/lib
 
 LIBS += -L../frigotunnel/lib -lfrigotunnel

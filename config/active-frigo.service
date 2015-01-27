@@ -1,0 +1,15 @@
+[Unit]
+Description=Active Frigo Node
+After=network.target
+After=sound.target
+Requires=network.target
+Requires=sound.target
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=/usr/bin/amixer cset numid=3 1
+ExecStartPre=amixer cset numid=1 100%
+ExecStart=/root/active-frigo-node/build/active-frigo-node -c /root/active-frigo-node/samples/config.json
+
+[Install]
+WantedBy=multi-user.target

@@ -12,7 +12,8 @@
 
 FrigoServer::FrigoServer(QObject *parent) :
     QObject(parent),
-    tunnel(new FrigoTunnel(Config::getInstance().getName(), this))
+    tunnel(new FrigoTunnel(Config::getInstance().getName(), this)),
+    globalVolume(100)
 {
     connect(tunnel, &FrigoTunnel::gotMessage, this, &FrigoServer::handleMessage);
 }
@@ -36,6 +37,11 @@ void FrigoServer::handleMessage(const QJsonObject &message)
         }
 
         playSound(name, volume);
+    } else if (type == "set-volume") {
+        if (message["volume"].isDouble()) {
+            globalVolume = message["volume"].toDouble();
+            updateVolume();
+        }
     }
 }
 
@@ -48,9 +54,17 @@ void FrigoServer::playSound(QString key, int volume)
     }
 
     player.setMedia(QUrl::fromLocalFile(sound));
-    player.setVolume(volume);
+
+    trackVolume = volume;
+    updateVolume();
+
     player.play();
 
     qDebug() << "Playing sound " << key;
+}
+
+void FrigoServer::updateVolume()
+{
+    player.setVolume((trackVolume * globalVolume) / 100);
 }
 

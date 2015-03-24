@@ -21,10 +21,13 @@ signals:
 public slots:
     void handleMessage(const QJsonObject &message);
     void playSound(QString key, int volume);
+    void updateVolume();
 
 private:
     FrigoTunnel *tunnel;
     QMediaPlayer player;
+
+    int globalVolume, trackVolume;
 };
 
 #endif // FRIGOSERVER_H

@@ -13,7 +13,8 @@
 FrigoServer::FrigoServer(QObject *parent) :
     QObject(parent),
     tunnel(new FrigoTunnel(Config::getInstance().getName(), this)),
-    globalVolume(100)
+    globalVolume(100),
+    trackVolume(100)
 {
     connect(tunnel, &FrigoTunnel::gotMessage, this, &FrigoServer::handleMessage);
 }
@@ -65,6 +66,8 @@ void FrigoServer::playSound(QString key, int volume)
 
 void FrigoServer::updateVolume()
 {
-    player.setVolume((trackVolume * globalVolume) / 100);
+    int newVolume = (trackVolume * globalVolume) / 100;
+    qDebug() << "Setting volume" << newVolume;
+    player.setVolume(newVolume);
 }
 

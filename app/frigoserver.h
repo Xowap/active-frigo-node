@@ -22,6 +22,7 @@ public slots:
     void handleMessage(const QJsonObject &message);
     void playSound(QString key, int volume);
     void updateVolume();
+    void preloadSounds();
 
 private:
     FrigoTunnel *tunnel;

@@ -20,6 +20,7 @@ public:
     bool isValid();
 
     QString getSound(const QString &key) const;
+    QMap<QString, QString> getSounds() const;
     QString getName() const;
 
 signals:

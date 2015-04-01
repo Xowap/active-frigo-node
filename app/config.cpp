@@ -28,6 +28,11 @@ QString Config::getSound(const QString &key) const
     return sounds[key];
 }
 
+QMap<QString, QString> Config::getSounds() const
+{
+    return sounds;
+}
+
 QString Config::getName() const
 {
     return document.object()["name"].toString();

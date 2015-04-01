@@ -9,6 +9,7 @@
 #include <QBuffer>
 #include <QNetworkInterface>
 #include <QList>
+#include <QFile>
 
 FrigoServer::FrigoServer(QObject *parent) :
     QObject(parent),
@@ -17,6 +18,7 @@ FrigoServer::FrigoServer(QObject *parent) :
     trackVolume(100)
 {
     connect(tunnel, &FrigoTunnel::gotMessage, this, &FrigoServer::handleMessage);
+    preloadSounds();
 }
 
 FrigoServer::~FrigoServer()
@@ -69,5 +71,19 @@ void FrigoServer::updateVolume()
     int newVolume = (trackVolume * globalVolume) / 100;
     qDebug() << "Setting volume" << newVolume;
     player.setVolume(newVolume);
+}
+
+void FrigoServer::preloadSounds()
+{
+    QMap<QString, QString> sounds = Config::getInstance().getSounds();
+
+    for (auto key : sounds.keys()) {
+        QFile f(sounds[key]);
+
+        if (f.open(QFile::ReadOnly)) {
+            f.readAll();
+            qDebug() << "Preloaded" << sounds[key];
+        }
+    }
 }
 

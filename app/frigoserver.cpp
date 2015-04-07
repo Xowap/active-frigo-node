@@ -50,27 +50,35 @@ void FrigoServer::handleMessage(const QJsonObject &message)
 
 void FrigoServer::playSound(QString key, int volume)
 {
-    QString sound = Config::getInstance().getSound(key);
-
-    if (sound.isEmpty()) {
+    if (!sounds.contains(key)) {
         return;
     }
 
-    player.setMedia(QUrl::fromLocalFile(sound));
+    stopAll();
 
     trackVolume = volume;
     updateVolume();
 
-    player.play();
+    sounds[key]->play();
 
     qDebug() << "Playing sound " << key;
 }
 
+void FrigoServer::stopAll()
+{
+    for (SoundMap::iterator i = sounds.begin(); i != sounds.end(); i++) {
+        i.value()->stop();
+    }
+}
+
 void FrigoServer::updateVolume()
 {
-    int newVolume = (trackVolume * globalVolume) / 100;
+    qreal newVolume = volumef();
     qDebug() << "Setting volume" << newVolume;
-    player.setVolume(newVolume);
+
+    for (SoundMap::iterator i = sounds.begin(); i != sounds.end(); i++) {
+        i.value()->setVolume(newVolume);
+    }
 }
 
 void FrigoServer::preloadSounds()
@@ -78,12 +86,17 @@ void FrigoServer::preloadSounds()
     QMap<QString, QString> sounds = Config::getInstance().getSounds();
 
     for (auto key : sounds.keys()) {
-        QFile f(sounds[key]);
+        auto sound = new QSoundEffect(this);
+        sound->setSource(QUrl::fromLocalFile(sounds[key]));
+        sound->setLoopCount(1);
+        sound->setVolume(volumef());
 
-        if (f.open(QFile::ReadOnly)) {
-            f.readAll();
-            qDebug() << "Preloaded" << sounds[key];
-        }
+        this->sounds[key] = sound;
     }
+}
+
+qreal FrigoServer::volumef()
+{
+    return (qreal) (trackVolume * globalVolume) / 10000.0f;
 }
 

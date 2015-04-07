@@ -4,10 +4,14 @@
 #include <QObject>
 #include <QUdpSocket>
 #include <QVariant>
-#include <QMediaPlayer>
 #include <QJsonObject>
+#include <QSoundEffect>
+#include <QString>
+#include <QMap>
 
 #include "frigotunnel.h"
+
+typedef QMap<QString, QSoundEffect *> SoundMap;
 
 class FrigoServer : public QObject
 {
@@ -21,12 +25,15 @@ signals:
 public slots:
     void handleMessage(const QJsonObject &message);
     void playSound(QString key, int volume);
+    void stopAll();
     void updateVolume();
     void preloadSounds();
 
 private:
+    qreal volumef();
+
     FrigoTunnel *tunnel;
-    QMediaPlayer player;
+    SoundMap sounds;
 
     int globalVolume, trackVolume;
 };

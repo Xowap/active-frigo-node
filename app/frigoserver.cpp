@@ -13,7 +13,7 @@
 
 FrigoServer::FrigoServer(QObject *parent) :
     QObject(parent),
-    tunnel(new FrigoTunnel(Config::getInstance().getName(), this)),
+    tunnel(new FrigoTunnel(Config::getInstance().getName(), QStringList() << "/dev/ttyUSB0" << "/dev/ttyUSB1", this)),
     globalVolume(100),
     trackVolume(100)
 {

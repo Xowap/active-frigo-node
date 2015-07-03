@@ -7,6 +7,10 @@
 QT       += core network multimedia
 QT       -= gui
 
+!android {
+    QT += serialport
+}
+
 TARGET = active-frigo-node
 CONFIG   += console
 CONFIG   += c++11
